@@ -25,7 +25,7 @@ import {
   useExchangeEthPrice,
 } from "eth-hooks/dapps/dex";
 // import Hints from "./Hints";
-import { ExampleUI, Hints, Subgraph } from "./views";
+import { ExampleUI, Hints, Subgraph, CommitReveal } from "./views";
 
 import { useContractConfig } from "./hooks"
 import Portis from "@portis/web3";
@@ -249,7 +249,10 @@ function App(props) {
   const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
   // 📟 Listen for broadcast events
-  const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
+  // const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
+  const commitEvents = useEventListener(readContracts, "YourContract", "CommitHash", localProvider, 1);
+  const revealEvents = useEventListener(readContracts, "YourContract", "RevealHash", localProvider, 1);
+
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -460,6 +463,16 @@ function App(props) {
               YourContract
             </Link>
           </Menu.Item>
+          <Menu.Item key="/commitreveal">
+            <Link
+              onClick={() => {
+                setRoute("/commitreveal");
+              }}
+              to="/commitreveal"
+            >
+              Commit/Reveal
+            </Link>
+          </Menu.Item>
           <Menu.Item key="/hints">
             <Link
               onClick={() => {
@@ -527,6 +540,21 @@ function App(props) {
               price={price}
             />
           </Route>
+          <Route path="/commitreveal">
+            <CommitReveal
+              address={address}
+              userSigner={userSigner}
+              mainnetProvider={mainnetProvider}
+              localProvider={localProvider}
+              yourLocalBalance={yourLocalBalance}
+              price={price}
+              tx={tx}
+              writeContracts={writeContracts}
+              readContracts={readContracts}
+              commitEvents={commitEvents}
+              revealEvents={revealEvents}
+            />
+          </Route>
           <Route path="/exampleui">
             <ExampleUI
               address={address}
@@ -539,7 +567,7 @@ function App(props) {
               writeContracts={writeContracts}
               readContracts={readContracts}
               purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
+              // setPurposeEvents={setPurposeEvents}
             />
           </Route>
           <Route path="/mainnetdai">
